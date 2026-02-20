@@ -1,0 +1,12 @@
+---
+- name: Ensure ufw is enabled
+  community.general.ufw:
+    state: enabled
+
+- name: Add rules to ufw
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    name: "{{ item.name }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop: "{{ ufw_rules }}"

@@ -9,7 +9,6 @@
     shell: /bin/bash
     groups: "{{ item.groups }}"
   with_items: "{{ users_init }}"
-  when: item.user in users_init
 
 - name: Set ssh key for development user
   become: yes

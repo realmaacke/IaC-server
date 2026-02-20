@@ -1,0 +1,23 @@
+#cloud-config
+autoinstall:
+    version: 1
+
+    identity:
+        hostname: iac-vm
+        username: devuser
+        password: "$6$bEAwD2jOuJWZgOA7$jt2gnvSQNCN6VesNSGtrKQMueISsHMDjFo76VsTbA7gzjeeQtb67kL8rM6qD8eXP1BFrzH8SBPJrkEWQgmhJV1"
+    
+    ssh:
+        install-server: true
+        authorized-keys:
+            - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPpGjgNzIoUmfzCWqm280mXtjvFB7CA+dJZdvVLQ9E45 marcus@DESKTOP-3FJCNJ2
+    
+    storage:
+        layout:
+            name: direct
+    
+    packages:
+        - python3
+        - python3-apt
+    
+    updates: security

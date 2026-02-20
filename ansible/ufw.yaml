@@ -1,0 +1,9 @@
+---
+- hosts: all
+  remote_user: devuser
+  become: yes
+  become_method: sudo
+  vars_files:
+    - group_vars/networking.yml
+  roles:
+    - ufw

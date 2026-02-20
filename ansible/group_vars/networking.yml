@@ -1,0 +1,6 @@
+---
+
+# ufw
+ufw_rules:
+  - { rule: allow, name: "Nginx Full" } # Server => out
+  - { rule: allow, name: "SSH", port: 22, proto: tcp } # SSH
