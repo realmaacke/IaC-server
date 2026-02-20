@@ -1,0 +1,14 @@
+---
+filesystems:
+  - cramfs
+  - freevxfs
+  - jffs2
+  - hfs
+  - hfsplus
+  - squashfs
+  - udf
+  - fat
+  - vfat
+  - nfs
+  - nfsv3
+  - gfs2

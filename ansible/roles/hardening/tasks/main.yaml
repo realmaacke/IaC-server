@@ -1,0 +1,98 @@
+---
+# Kernel
+- name: Restrict access to kernel logs
+  command: echo "kernel.dmesg_restrict = 1" > /etc/sysctl.d/50-dmesg-restrict.conf
+
+- name: Restrict access to kernel pointers
+  command: echo "kernel.kptr_restrict = 1" > /etc/sysctl.d/50-kptr-restrict.conf
+
+- name: ExecShield Protection
+  command: echo "kernel.exec-shield = 2" > /etc/sysctl.d/50-exec-shield.conf
+
+- name: Randomize memory space
+  command: echo "kernel.randomize_va_space=2" > /etc/sysctl.d/50-rand-va-space.conf
+
+# Logging
+
+- name: Ensure syslog is enabled and running
+  ansible.builtin.systemd_service:
+    state: started
+    name: rsyslog
+
+# Login access
+- name: auto logout inactive users step 1 / 3
+  ansible.builtin.lineinfile:
+    path: /etc/profile.d/idle-users.sh
+    line: "readonly TMOUT=900"
+    state: present
+    create: true
+
+- name: auto logout inactive users step 2 / 3
+  ansible.builtin.lineinfile:
+    path: /etc/profile.d/idle-users.sh
+    line: "readonly HISTFILE"
+    state: present
+    create: true
+
+- name: auto logout inactive users step 3 / 3
+  command: chmod +x /etc/profile.d/idle-users.sh
+
+- name: Add faillock preauth
+  lineinfile:
+    path: /etc/pam.d/common-auth
+    line: "auth required pam_faillock.so preauth silent deny=3 unlock_time=900 fail_interval=900"
+    insertbefore: '^auth.*pam_unix\.so'
+    state: present
+    backup: yes
+
+- name: Add faillock authfail
+  lineinfile:
+    path: /etc/pam.d/common-auth
+    line: "auth [default=die] pam_faillock.so authfail deny=3 unlock_time=900 fail_interval=900"
+    insertafter: '^auth.*pam_unix\.so'
+    state: present
+    backup: yes
+
+- name: Add faillock account rule
+  lineinfile:
+    path: /etc/pam.d/common-account
+    line: "account required pam_faillock.so"
+    insertbefore: '^account.*pam_unix\.so'
+    state: present
+    backup: yes
+
+# File system
+- name: Hard link protection
+  command: echo "fs.protected_hardlinks = 1" > /etc/sysctl.d/50-fs-hardening.conf
+
+- name: Soft link protection
+  command: echo "fs.protected_symlinks = 1" >> /etc/sysctl.d/50-fs-hardening.conf
+
+- name: Disable uncommon file systems
+  command: "echo install {{ item }} /bin/false > /etc/modprobe.d/uncommon-fs.conf"
+  loop: "{{ filesystems}}"
+
+# Permissions
+- name: SELinux Enforcing
+  ansible.builtin.lineinfile:
+    path: /etc/selinux/config
+    line: "SELINUXTYPE=enforcing"
+    state: present
+    create: true
+
+# Networking
+
+- name: TCP SYN Cookie protection
+  command: echo "net.ipv4.tcp_syncookies = 1" > /etc/sysctl.d/50-net-stack.conf
+
+- name: Disable IP source routing
+  command: echo "net.ipv4.conf.all.accept_source_route = 0" > /etc/sysctl.d/50-net-stack.conf
+
+- name: Disable ICMP Protocol
+  command: echo "net.ipv4.conf.all.accept_redirects = 0" > /etc/sysctl.d/50-net-stack.conf
+
+- name: Enable ignoring of ICMP requests
+  command: echo "net.ipv4.icmp_echo_ignore_all = 1" > /etc/sysctl.d/50-net-stack.conf
+
+- name: Ignore broadcast request
+  command: echo "net.ipv4.icmp_echo_ignore_broadcasts = 1" > /etc/sysctl.d/50-net-stack.conf

@@ -1,0 +1,16 @@
+---
+packages:
+  - git
+  - python3
+  - curl
+  - ca-certificates
+  - build-essential
+  - unzip
+  - jq
+  - zsh
+
+  - rsyslog # used for networking ansible
+# To install nvm + node (prevents build failures for node)
+  - libssl-dev
+  - pkg-config
+  - libpam-modules # for hardening part

@@ -1,0 +1,23 @@
+# ssh access
+authorized_users_groups:
+  - devuser
+  - normal_user
+# Startup users to be created
+users_init:
+  - user: marcus
+    password: "password"
+    groups:
+      - sudo
+
+  - user: devuser
+    password: "devPass123"
+    groups:
+      - sudo
+
+  - user: superuser
+    password: "password"
+    groups:
+      - sudo
+
+first_init_development_groups:
+  - sudo

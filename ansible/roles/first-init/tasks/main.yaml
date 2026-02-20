@@ -1,0 +1,56 @@
+---
+
+- name: Create init users
+  become: yes
+  ansible.builtin.user:
+    name: "{{ item.user }}"
+    password: "{{ item.password | password_hash('sha512')}}"
+    state: present
+    shell: /bin/bash
+    groups: "{{ item.groups }}"
+  with_items: "{{ users_init }}"
+  when: item.user in users_init
+
+- name: Set ssh key for development user
+  become: yes
+  ansible.builtin.authorized_key:
+    user: "{{ item.user }}"
+    key: "{{ lookup('file', 'keys/id_ed_vm.pub') }}"
+    exclusive: yes
+  with_items: "{{ users_init }}"
+  when: item.user == "devuser"
+
+- name: Update apt-cache and upgrade packages
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: dist
+    cache_valid_time: 3200
+
+- name: Install packages from vars
+  become: yes
+  apt:
+    name: "{{ packages }}"
+    state: present
+    force_apt_get: yes
+    update_cache: yes
+
+- name: Disallow root and password ssh access
+  become: yes
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    validate: "/usr/sbin/sshd -T -f %s" # kan få fel med line "PermitRootLogin testing"
+  with_items:
+    - regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^PermitRootLogin"
+      line: "PermitRootLogin no"
+  notify: restart ssh
+
+-   name: restart ssh
+    service: 
+        name: ssh
+        state: restarted
