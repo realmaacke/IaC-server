@@ -1,0 +1,45 @@
+---
+
+- import_tasks: install_docker.yml
+
+- name: Ensure project directory exists
+  file:
+    path: "/home/{{ start_user }}/dev/"
+    state: directory
+    owner: devuser
+    group: devuser
+    mode: '0755'
+
+- name: Clone or update repository
+  ansible.builtin.git:
+    repo: "{{ general_repo }}"
+    dest: "/home/{{ start_user }}/dev/general/"
+    version: main
+    update: yes
+  become: true
+  become_user: devuser
+
+- name: Add .env
+  ansible.builtin.copy:
+    src: .env
+    dest: /home/devuser/dev/general/
+
+- name: Update .env (Project path)
+  absible.builtin.lineinfile:
+    path: "/home/{{ start_user }}/dev/general/"
+    regex: '^PROJECT_ROOT=""'
+    line: 'PROJECT_ROOT="/home/{{start_user}}/dev/general"'
+    mode: '0644'
+
+## docker
+- name: Deploy compose
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ start_user }}/dev/general/"
+    state: present
+## nvm
+
+## node
+
+## clone
+
+## do stuff

@@ -1,3 +1,9 @@
+# Github
+general_repo: "https://github.com/realmaacke/General.git"
+
+# Devusername
+start_user: devuser
+
 # ssh access
 authorized_users_groups:
   - devuser

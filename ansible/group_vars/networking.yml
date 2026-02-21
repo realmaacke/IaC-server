@@ -2,5 +2,6 @@
 
 # ufw
 ufw_rules:
-  - { rule: allow, name: "Nginx Full" } # Server => out
-  - { rule: allow, name: "SSH", port: 22, proto: tcp } # SSH
+  - { rule: allow, port: 80, proto: tcp } # nginx
+  - { rule: allow, port: 443, proto: tcp } # nginx
+  - { rule: allow, port: 22, proto: tcp } # SSH

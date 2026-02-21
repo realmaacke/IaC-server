@@ -12,6 +12,10 @@ autoinstall:
         authorized-keys:
             - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPpGjgNzIoUmfzCWqm280mXtjvFB7CA+dJZdvVLQ9E45 marcus@DESKTOP-3FJCNJ2
     
+    late-commands:
+        - curtin in-target -- bash -c "echo 'devuser ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/devuser"
+        - curtin in-target -- chmod 0440 /etc/sudoers.d/devuser
+
     storage:
         layout:
             name: direct

@@ -6,7 +6,7 @@
 - name: Add rules to ufw
   community.general.ufw:
     rule: "{{ item.rule }}"
-    name: "{{ item.name }}"
-    port: "{{ item.port }}"
-    proto: "{{ item.proto }}"
+    name: "{{ item.name | default(omit) }}"
+    port: "{{ item.port | default(omit)}}"
+    proto: "{{ item.proto | default(omit)}}"
   loop: "{{ ufw_rules }}"
