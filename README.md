@@ -12,7 +12,9 @@
 
 ## Installation of Ansible
 1. Stand in root
-2. pip install -r requirements.txt
+2. python3 -m venv .venv
+3. source .venv/bin/activate
+4. pip install -r requirements.txt
 
 ## Environment setup
 1. cd ansible
