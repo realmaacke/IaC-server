@@ -25,10 +25,10 @@
     dest: /home/devuser/dev/general/
 
 - name: Update .env (Project path)
-  absible.builtin.lineinfile:
+  ansible.builtin.lineinfile:
     path: "/home/{{ start_user }}/dev/general/"
     regex: '^PROJECT_ROOT=""'
-    line: 'PROJECT_ROOT="/home/{{start_user}}/dev/general"'
+    line: 'PROJECT_ROOT="/home/{{ start_user }}/dev/general"'
     mode: '0644'
 
 ## docker
