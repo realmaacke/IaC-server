@@ -1,0 +1,26 @@
+#cloud-config
+
+hostname: iac-vm
+
+users:
+  - default
+
+  - name: devuser
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    passwd: "$6$bEAwD2jOuJWZgOA7$jt2gnvSQNCN6VesNSGtrKQMueISsHMDjFo76VsTbA7gzjeeQtb67kL8rM6qD8eXP1BFrzH8SBPJrkEWQgmhJV1"
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPpGjgNzIoUmfzCWqm280mXtjvFB7CA+dJZdvVLQ9E45 marcus@DESKTOP-3FJCNJ2
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILFYRNgCcHA8tfpW5x6LYndQ2OW7D1VQCPngYt0VOgrz marcus@Marcus-Laptop
+
+ssh_deletekeys: false
+ssh_pwauth: false
+
+packages:
+  - python3
+  - python3-apt
+
+package_update: true
+package_upgrade: false
