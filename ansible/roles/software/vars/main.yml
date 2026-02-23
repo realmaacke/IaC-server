@@ -3,3 +3,14 @@ packages:
   - ca-certificates
   - curl
   - gnupg
+
+db_paths:
+  - "database/init"
+  - "database/data"
+  - "database/logs"
+
+media_paths:
+  - "media"
+  - "media/downloads"
+  - "media/movies"
+  - "media/series"

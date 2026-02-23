@@ -3,5 +3,7 @@
   remote_user: devuser
   become: yes
   become_method: sudo
+  vars_files:
+    - group_vars/env.yml
   roles:
     - software

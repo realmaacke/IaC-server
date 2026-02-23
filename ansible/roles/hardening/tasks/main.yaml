@@ -37,29 +37,31 @@
 - name: auto logout inactive users step 3 / 3
   command: chmod +x /etc/profile.d/idle-users.sh
 
-- name: Add faillock preauth
+- name: Add faillock preauth 1 / 3 (Deny after x)
   lineinfile:
-    path: /etc/pam.d/common-auth
-    line: "auth required pam_faillock.so preauth silent deny=3 unlock_time=900 fail_interval=900"
-    insertbefore: '^auth.*pam_unix\.so'
-    state: present
-    backup: yes
+    path: /etc/security/faillock.conf
+    regexp: '^#?\s*deny\s*='
+    line: 'deny = 10'
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
 
-- name: Add faillock authfail
+- name: Add faillock preauth 2 / 3 (cooldown)
   lineinfile:
-    path: /etc/pam.d/common-auth
-    line: "auth [default=die] pam_faillock.so authfail deny=3 unlock_time=900 fail_interval=900"
-    insertafter: '^auth.*pam_unix\.so'
-    state: present
-    backup: yes
+    path: /etc/security/faillock.conf
+    regexp: '^#?\s*unlock_time\s*='
+    line: 'unlock_time = 900'
 
-- name: Add faillock account rule
+- name: Add faillock preauth 3 / 3 (intervall)
   lineinfile:
-    path: /etc/pam.d/common-account
-    line: "account required pam_faillock.so"
-    insertbefore: '^account.*pam_unix\.so'
-    state: present
-    backup: yes
+    path: /etc/security/faillock.conf
+    regexp: '^#?\s*fail_interval\s*='
+    line: 'fail_interval = 900'
+
+- name: Enable faillock PAM profile
+  ansible.builtin.command: pam-auth-update --enable faillock --force
+  changed_when: false
 
 # File system
 - name: Hard link protection
@@ -70,7 +72,7 @@
 
 - name: Disable uncommon file systems
   command: "echo install {{ item }} /bin/false > /etc/modprobe.d/uncommon-fs.conf"
-  loop: "{{ filesystems}}"
+  loop: "{{ filesystems }}"
 
 # Permissions
 - name: SELinux Enforcing

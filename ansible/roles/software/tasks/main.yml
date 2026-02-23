@@ -1,6 +1,14 @@
 ---
 
-- import_tasks: install_docker.yml
+- name: Sanity check compose
+  ansible.builtin.command: docker compose version
+  register: compose_check
+  changed_when: false
+  failed_when: false
+
+- name: Install docker compose plugin if missing
+  include_tasks: install_docker.yml
+  when: compose_check.rc != 0
 
 - name: Ensure project directory exists
   file:
@@ -19,27 +27,68 @@
   become: true
   become_user: devuser
 
-- name: Add .env
-  ansible.builtin.copy:
-    src: .env
-    dest: /home/devuser/dev/general/
+- name: Deploy .env file
+  ansible.builtin.template:
+    src: general.env.j2
+    dest: "/home/{{ start_user }}/dev/general/.env"
+    owner: root
+    group: root
+    mode: '0600'
 
-- name: Update .env (Project path)
-  ansible.builtin.lineinfile:
-    path: "/home/{{ start_user }}/dev/general/.env"
-    regex: 'PROJECT_ROOT=""'
-    line: 'PROJECT_ROOT="/home/{{start_user}}/dev/general"'
-    mode: '0644'  
+- name: Sanity check database init
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ db_paths }}"
+  register: db_checks
+  changed_when: false
 
-## Database:
-- import_tasks: init_database.yml
+- name: Sanity check media init
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ media_paths }}"
+  register: media_checks
+  changed_when: false
+
+- set_fact:
+    db_init: "{{ db_checks.results | map(attribute='stat.exists') | min == false }}"
+    media_init: "{{ media_checks.results | map(attribute='stat.exists') | min == false }}"
+
+- name: Initialize Database
+  include_tasks: init_database.yml
+  when: db_init
 
 
+- name: Initialize Media
+  include_tasks: init_media.yml
+  when: media_init
+
+
+- name: Write private key
+  copy:
+    content: "{{ CERT_KEY }}"
+    dest: /etc/ssl/private/privkey.pem
+    mode: '0600'
+
+
+- name: Init usage (JSON)
+  ansible.builtin.file:
+    path: "/home/{{ start_user }}/media/usage.json"
+    state: touch
+    owner: "{{ start_user }}"
+    group: "{{ start_user }}"
+    mode: '0644'
 ## docker
-- name: Deploy compose
+- name: Deploy compose stack
   community.docker.docker_compose_v2:
     project_src: "/home/{{ start_user }}/dev/general/"
     state: present
+    pull: missing
+    recreate: auto
+  register: compose_result
+
+- name: Show compose output
+  ansible.builtin.debug:
+    msg: "{{ compose_result }}"
 ## nvm
 
 ## node

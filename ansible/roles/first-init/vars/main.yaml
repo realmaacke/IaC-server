@@ -8,6 +8,7 @@ packages:
   - unzip
   - jq
   - zsh
+  - ufw
 
   - rsyslog # used for networking ansible
 # To install nvm + node (prevents build failures for node)

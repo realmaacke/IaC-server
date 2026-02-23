@@ -1,0 +1,13 @@
+---
+
+- name: Init media structure
+  ansible.builtin.command: "mkdir -p /home/{{ start_user }}/{{ item }}"
+  loop: "{{ media_paths }}"
+
+- name: Init usage (JSON)
+  ansible.builtin.file:
+    path: "/home/{{ start_user }}/media/usage.json"
+    state: touch
+    owner: "{{ start_user }}"
+    group: "{{ start_user }}"
+    mode: '0644'
