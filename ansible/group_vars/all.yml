@@ -11,12 +11,12 @@ authorized_users_groups:
 # Startup users to be created
 users_init:
   - user: marcus
-    password: "password"
+    password: "{{ marcus_password }}" # Vault stored
     groups:
       - sudo
 
   - user: devuser
-    password: "devPass123"
+    password: "{{ devuser_password }}" # Vault stored
     groups:
       - sudo
 

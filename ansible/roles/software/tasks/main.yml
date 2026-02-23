@@ -25,11 +25,15 @@
     dest: /home/devuser/dev/general/
 
 - name: Update .env (Project path)
-  absible.builtin.lineinfile:
-    path: "/home/{{ start_user }}/dev/general/"
-    regex: '^PROJECT_ROOT=""'
+  ansible.builtin.lineinfile:
+    path: "/home/{{ start_user }}/dev/general/.env"
+    regex: 'PROJECT_ROOT=""'
     line: 'PROJECT_ROOT="/home/{{start_user}}/dev/general"'
-    mode: '0644'
+    mode: '0644'  
+
+## Database:
+- import_tasks: init_database.yml
+
 
 ## docker
 - name: Deploy compose
