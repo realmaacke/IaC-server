@@ -17,7 +17,6 @@
     key: "{{ lookup('file', 'keys/id_ed_vm.pub') }}"
     exclusive: yes
   with_items: "{{ users_init }}"
-  when: item.user == "devuser"
 
 - name: Update apt-cache and upgrade packages
   become: yes

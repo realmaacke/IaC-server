@@ -8,7 +8,7 @@ start_user: devuser
 authorized_users_groups:
   - devuser
   - normal_user
-# Startup users to be created
+# Startup users to be created 
 users_init:
   - user: marcus
     password: "{{ marcus_password }}" # Vault stored
