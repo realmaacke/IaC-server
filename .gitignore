@@ -1,2 +1,3 @@
 .venv
 ansible/roles/software/files/.env
+ansible/.trivy-cache/
