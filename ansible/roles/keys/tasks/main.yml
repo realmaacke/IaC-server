@@ -1,0 +1,9 @@
+---
+
+- name: Re-add ssh keys
+  become: yes
+  ansible.builtin.authorized_key:
+    user: "{{ item.user }}"
+    key: "{{ lookup('file', 'keys/id_ed_vm.pub') }}"
+    exclusive: yes
+  with_items: "{{ users_init }}"
