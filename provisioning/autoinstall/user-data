@@ -6,6 +6,7 @@ autoinstall:
     locale: sv_SE.UTF-8
     keyboard:
         layout: se
+        variant: ""
 
     identity:
         hostname: iac-vm
@@ -17,31 +18,47 @@ autoinstall:
         authorized-keys:
             - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPpGjgNzIoUmfzCWqm280mXtjvFB7CA+dJZdvVLQ9E45 marcus@DESKTOP-3FJCNJ2
             - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILFYRNgCcHA8tfpW5x6LYndQ2OW7D1VQCPngYt0VOgrz marcus@Marcus-Laptop
-    
     storage:
-        version: 1
-        config:
-            - type: disk
-              id: disk0
-              match:
-                size: largest
-              wipe: superblock-recursive
-              ptable: gpt
-              grub_device: true
+      version: 1
+      config:
+        - type: disk
+          id: disk0
+          match:
+            size: largest
+          wipe: superblock-recursive
+          ptable: gpt
+          grub_device: true
 
-            - type: partition
-              id: partition0
-              device: disk0
-              size: -1
+        # EFI partition
+        - type: partition
+          id: efi-part
+          device: disk0
+          size: 512M
+          flag: esp
 
-            - type: format
-              id: format0
-              volume: partition0
-              fstype: ext4
+        - type: format
+          id: efi-format
+          volume: efi-part
+          fstype: fat32
 
-            - type: mount
-              device: format0
-              path: /
+        - type: mount
+          device: efi-format
+          path: /boot/efi
+
+        # root partition
+        - type: partition
+          id: root-part
+          device: disk0
+          size: -1
+
+        - type: format
+          id: root-format
+          volume: root-part
+          fstype: ext4
+
+        - type: mount
+          device: root-format
+          path: /
     
     late-commands:
         - curtin in-target -- bash -c "echo 'devuser ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/devuser"
