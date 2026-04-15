@@ -1,5 +1,7 @@
 ---
 # - import_playbook: playbook.yml
-- import_playbook: hardening.yml
-- import_playbook: ufw.yml
+# - import_playbook: hardening.yml
+# - import_playbook: ufw.yml
 - import_playbook: software.yml
+# - import_playbook: keys.yml
+# - import_playbook: vulnerability-scan.yml

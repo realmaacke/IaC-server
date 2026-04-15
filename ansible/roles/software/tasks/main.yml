@@ -65,8 +65,8 @@
 
 - name: Write private key
   copy:
-    content: "{{ CERT_KEY }}"
-    dest: /etc/ssl/private/privkey.pem
+    content: "{{ CERT_KEY | replace('\\n', '\n') | regex_replace('^\"|\"$', '') }}"
+    dest: /home/{{ start_user }}/dev/general/nginx/certs/live/petterssonhome.se/privkey.pem
     mode: '0600'
 
 
@@ -89,6 +89,12 @@
 - name: Show compose output
   ansible.builtin.debug:
     msg: "{{ compose_result }}"
+
+## OTHER STUFF
+
+## PERMISSION FOR MEDIA FOLDER FOR abc
+
+
 ## nvm
 
 ## node
