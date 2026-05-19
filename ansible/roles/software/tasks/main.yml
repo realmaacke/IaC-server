@@ -85,11 +85,12 @@
     pull: missing
     recreate: auto
   register: compose_result
+  async: 3600
+  poll: 5
 
-- name: Show compose output
+- name: Show final result
   ansible.builtin.debug:
-    msg: "{{ compose_result }}"
-
+    var: compose_result
 ## OTHER STUFF
 
 ## PERMISSION FOR MEDIA FOLDER FOR abc
