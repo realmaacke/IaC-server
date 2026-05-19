@@ -90,6 +90,53 @@
   ansible.builtin.debug:
     msg: "{{ compose_result }}"
 
+## Logging
+- name: Create log location if missing
+  ansible.builtin.command: "mkdir -p /home/{{ start_user }}/dev/general/logs"
+
+- name: Create systemd service
+  ansible.builtin.copy:
+    src: /home/devuser/dev/general/logs/logging.service
+    dest: /etc/systemd/system/general_logging.service
+    remote_src: true
+    owner: "{{ start_user }}"
+    group: "{{ start_user }}"
+    mode: '0644'
+
+- name: Copy Log Parser service
+  ansible.builtin.copy:
+    src: /home/devuser/dev/general/logs/logParser.service
+    dest: /etc/systemd/system/logParser.service
+    remote_src: true
+    owner: "{{ start_user }}"
+    group: "{{ start_user }}"
+    mode: '0644'
+
+- name: Copy Log Parser Timer
+  ansible.builtin.copy:
+    src: /home/devuser/dev/general/logs/logParser.timer
+    dest: /etc/systemd/system/logParser.timer
+    remote_src: true
+    owner: "{{ start_user }}"
+    group: "{{ start_user }}"
+    mode: '0644'
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start log parser
+  ansible.builtin.systemd:
+    name: logParser.timer
+    enabled: true
+    state: started
+
+- name: Start logging
+  ansible.builtin.systemd:
+    name: general_logging.service
+    enabled: true
+    state: started
+    
 ## OTHER STUFF
 
 ## PERMISSION FOR MEDIA FOLDER FOR abc
