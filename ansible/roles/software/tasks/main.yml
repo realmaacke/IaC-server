@@ -78,17 +78,14 @@
     group: "{{ start_user }}"
     mode: '0644'
 ## docker
-- name: Deploy compose stack
-  community.docker.docker_compose_v2:
-    project_src: "/home/{{ start_user }}/dev/general/"
-    state: present
-    pull: missing
-    recreate: auto
-  register: compose_result
-
-- name: Show compose output
-  ansible.builtin.debug:
-    msg: "{{ compose_result }}"
+- name: Deploy compose stack with live logs
+  ansible.builtin.command: >
+    docker compose -f /home/{{ start_user }}/dev/general/docker-compose.yml up
+    --build
+    --pull missing
+    --force-recreate
+  args:
+    chdir: "/home/{{ start_user }}/dev/general"
 
 ## Logging
 - name: Create log location if missing
@@ -136,7 +133,6 @@
     name: general_logging.service
     enabled: true
     state: started
-    
 ## OTHER STUFF
 
 ## PERMISSION FOR MEDIA FOLDER FOR abc
