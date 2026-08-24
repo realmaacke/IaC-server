@@ -1,10 +1,4 @@
 ## Migration
-
-## How to tackle?
-1. Define Layers
-2. Gather information (os version, installed packages, users & groups, services, containers, ports, crontabs, firewall rules, custom shebangs, volumes)
-3. No more SSH changes (purley IaC)
-
 ## Installation
 1. Inside /provisions is user & meta data, follow md file inside folder to compile into .iso
 2. Bake iso into Linux iso, (Autoinstaller)
@@ -72,8 +66,7 @@
 3. Where to backup
 
 ### Secrets
-1. Vaults?
-2. No plain secrets!
+1. Vault
 
 
 ### Reproduce
